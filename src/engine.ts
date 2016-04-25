@@ -2,12 +2,14 @@
 import Container = PIXI.Container;
 import Sprite = PIXI.Sprite;
 
-class Engine {
+class Engine
+{
 	private renderer: PIXI.CanvasRenderer | PIXI.WebGLRenderer;
 	private stage: Container;
 	private candy: Sprite;
 
-	constructor(width: number = 800, height: number = 600) {
+	constructor(width: number = 800, height: number = 600)
+	{
 		this.renderer = PIXI.autoDetectRenderer(width, height);
 		document.body.appendChild(this.renderer.view);
 
@@ -22,15 +24,18 @@ class Engine {
 		this.onFrameRequestCallback(0);
 	}
 
-	private update(): void {
+	private update(): void
+	{
 		this.candy.rotation += 0.1;
 	}
 
-	private render(): void {
+	private render(): void
+	{
 		this.renderer.render(this.stage);
 	}
 
-	private onFrameRequestCallback = (timeStamp: number): void => {
+	private onFrameRequestCallback = (timeStamp: number): void =>
+	{
 		requestAnimationFrame(this.onFrameRequestCallback);
 
 		this.update();
