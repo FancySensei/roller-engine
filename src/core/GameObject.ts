@@ -8,6 +8,7 @@ namespace Roller {
 	export class GameObject extends Container {
 
 		public enabled: boolean = true;
+		public parentGameObject: GameObject;
 
 		protected components: Array<Component> = [];
 		protected gameObjects: Array<GameObject> = [];
@@ -23,6 +24,7 @@ namespace Roller {
 			let index = this.components.indexOf(component);
 			if (index >= 0) {
 				this.components.push(component);
+				component.parentGameObject = this;
 			}
 			else {
 				console.warn("Component cannot be added (already exist): ", component);
@@ -38,6 +40,7 @@ namespace Roller {
 			let index = this.components.indexOf(component);
 			if (index >= 0) {
 				this.components.splice(index, 1);
+				component.parentGameObject = null;
 			}
 			else {
 				console.warn("Component cannot be removed (does not exist): ", component);
@@ -60,6 +63,7 @@ namespace Roller {
 					this.gameObjects.push(gameObject);
 					this.addChild(gameObject);
 				}
+				gameObject.parentGameObject = this;
 			}
 			else {
 				console.warn("GameObject cannot be added (already exist): ", gameObject);
@@ -76,6 +80,7 @@ namespace Roller {
 			if (index >= 0) {
 				this.gameObjects.splice(index, 1);
 				this.removeChild(gameObject);
+				gameObject.parentGameObject = null;
 			}
 			else {
 				console.warn("GameObject cannot be removed (does not exist): ", gameObject);
@@ -89,6 +94,7 @@ namespace Roller {
 		 */
 		public removeGameObjectAt(index: number): GameObject {
 			if (index >= 0 && index < this.gameObjects.length) {
+				this.gameObjects[index].parentGameObject = null;
 				this.gameObjects.splice(index, 1);
 				this.removeChildAt(index);
 			}
@@ -105,7 +111,7 @@ namespace Roller {
 		 */
 		public update(): void {
 			if (!this.enabled) return;
-			
+
 			this.components.forEach(component => {
 				component.update();
 			});
@@ -120,7 +126,7 @@ namespace Roller {
 		 */
 		public fixedUpdate(): void {
 			if (!this.enabled) return;
-			
+
 			this.components.forEach(component => {
 				component.fixedUpdate();
 			});
@@ -135,7 +141,7 @@ namespace Roller {
 		 */
 		public lateUpdate(): void {
 			if (!this.enabled) return;
-			
+
 			this.components.forEach(component => {
 				component.lateUpdate();
 			});

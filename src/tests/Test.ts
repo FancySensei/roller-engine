@@ -8,7 +8,13 @@ class Test extends Roller.Scene {
 
 	constructor() {
 		super();
-		var engine = new Roller.Engine(window.innerWidth, window.innerHeight);
+		
+		let options = PIXI.DEFAULT_RENDER_OPTIONS;
+		options.backgroundColor = 0x000000;
+		
+		var engine = new Roller.Engine(window.innerWidth, window.innerHeight, options);
+		engine.autoResize = true;
+		
 		this.candy = PIXI.Sprite.fromImage("./assets/candy.png", false);
 		this.candy.anchor.set(0.5, 0.5);
 		this.candy.position.set(engine.renderer.width / 2.0, engine.renderer.height / 2.0);
@@ -27,4 +33,4 @@ class Test extends Roller.Scene {
 	}
 }
 
-var test = new Test();
+let test = new Test();

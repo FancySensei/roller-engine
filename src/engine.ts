@@ -28,17 +28,18 @@ namespace Roller {
 			return this._isRunning;
 		}
 
+		public autoResize: boolean = false;
+
 		private requestedAnimationFrame: number;
 
-		constructor(width: number = 800, height: number = 600) {
+		constructor(width: number = 800, height: number = 600, options?: PIXI.RendererOptions, noWebGL?: boolean) {
 			if (Engine._instance != null) {
 				console.error("You'd better not instantiate more than 1 Roller Engine!")
 			}
 			Engine._instance = this;
 
-			this._renderer = PIXI.autoDetectRenderer(width, height);
+			this._renderer = PIXI.autoDetectRenderer(width, height, options, noWebGL);
 			document.body.appendChild(this.renderer.view);
-			this.renderer.autoResize = true;
 
 			window.addEventListener("resize", this.onResize);
 		}
@@ -64,7 +65,9 @@ namespace Roller {
 		}
 
 		private onResize = (event: UIEvent): any => {
-			this.renderer.resize(window.innerWidth, window.innerHeight);
+			if (this.autoResize) {
+				this.renderer.resize(window.innerWidth, window.innerHeight);
+			}
 			this.currentScene.onResize(this.renderer.width, this.renderer.height);
 		}
 
