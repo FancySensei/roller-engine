@@ -56,8 +56,6 @@ namespace Roller {
 			this._deltaTime = this._unscaledDeltaTime * this.timeScale;
 			this._timeSinceStart = timeStamp / 1000.0;
 			this.lastTimeStamp = timeStamp;
-
-			console.log(this.deltaTime);
 		}
 
 	}

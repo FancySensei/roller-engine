@@ -38,6 +38,7 @@ class Test extends Roller.Scene {
 		this.candy.position.x = Math.sin(Time.timeSinceStart) * 100;
 		this.candy.position.y = Math.cos(Time.timeSinceStart) * 150;
 		this.candy.rotation += Math.PI * Time.deltaTime;
+		this.camera.zoom = Math.sin(Time.timeSinceStart * 1.5) * 1.5 + 2.0;
 	}
 
 	public onResize(width: number, height: number): void {

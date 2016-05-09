@@ -55,6 +55,9 @@ namespace Roller {
 		get zoom(): number {
 			return this._zoom;
 		}
+		set zoom(value: number) {
+			this._zoom = value;
+		}
 
 		constructor(scene: Scene) {
 			super();
