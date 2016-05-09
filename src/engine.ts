@@ -10,7 +10,7 @@ namespace Roller {
 
 		private static _instance: Engine;
 		static get instance(): Engine {
-			return this.instance;
+			return this._instance;
 		}
 
 		private _renderer: PIXI.CanvasRenderer | PIXI.WebGLRenderer;

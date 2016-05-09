@@ -21,8 +21,9 @@ namespace Roller {
 		 * Add a Component to the update list.
 		 */
 		public addComponent(component: Component): GameObject {
+			console.log(component);
 			let index = this.components.indexOf(component);
-			if (index >= 0) {
+			if (index < 0) {
 				this.components.push(component);
 				component.parentGameObject = this;
 			}
@@ -54,7 +55,7 @@ namespace Roller {
 		 */
 		public addGameObject(gameObject: GameObject, at?: number): GameObject {
 			let index = this.gameObjects.indexOf(gameObject);
-			if (index >= 0) {
+			if (index < 0) {
 				if (at) {
 					this.gameObjects.splice(at, 0, gameObject);
 					this.addChildAt(gameObject, at);
