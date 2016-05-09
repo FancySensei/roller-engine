@@ -18,9 +18,12 @@ class Test extends Roller.Scene {
 		var engine = new Roller.Engine(window.innerWidth, window.innerHeight, options);
 		engine.autoResize = true;
 
+		let measurere = PIXI.Sprite.fromImage("./assets/debug/measurer_centred_coloured.png", false);
+		measurere.anchor.set(0.5, 0.5);
+		this.addChild(measurere);
+
 		this.candy = PIXI.Sprite.fromImage("./assets/candy.png", false);
 		this.candy.anchor.set(0.5, 0.5);
-		this.candy.position.set(engine.renderer.width / 2.0, engine.renderer.height / 2.0);
 		this.addChild(this.candy);
 
 		this.camera = new Roller.Camera(this);
@@ -32,11 +35,13 @@ class Test extends Roller.Scene {
 
 	public update(): void {
 		super.update();
-		this.candy.rotation += Time.deltaTime;
+		this.candy.position.x = Math.sin(Time.timeSinceStart) * 100;
+		this.candy.position.y = Math.cos(Time.timeSinceStart) * 150;
+		this.candy.rotation += Math.PI * Time.deltaTime;
 	}
 
 	public onResize(width: number, height: number): void {
-		this.candy.position.set(width / 2.0, height / 2.0);
+		this.camera.centre.set(width / 2.0, height / 2.0);
 	}
 }
 

@@ -21,9 +21,7 @@ namespace Roller {
 		 * Add a Component to the update list.
 		 */
 		public addComponent(component: Component): GameObject {
-			console.log(component);
-			let index = this.components.indexOf(component);
-			if (index < 0) {
+			if (!this.hasComponent(component)) {
 				this.components.push(component);
 				component.parentGameObject = this;
 			}
@@ -51,11 +49,17 @@ namespace Roller {
 		}
 
 		/**
+		 * Check if the game object has the target Component.
+		 */
+		public hasComponent(component: Component): boolean {
+			return this.components.indexOf(component) >= 0;
+		}
+
+		/**
 		 * Add a GameObject to the list.
 		 */
 		public addGameObject(gameObject: GameObject, at?: number): GameObject {
-			let index = this.gameObjects.indexOf(gameObject);
-			if (index < 0) {
+			if (!this.hasGameObject(gameObject)) {
 				if (at) {
 					this.gameObjects.splice(at, 0, gameObject);
 					this.addChildAt(gameObject, at);
@@ -104,6 +108,13 @@ namespace Roller {
 			}
 
 			return this;
+		}
+
+		/**
+		 * Check if the target game object already in the list.
+		 */
+		public hasGameObject(gameObject: GameObject): boolean {
+			return this.gameObjects.indexOf(gameObject) >= 0;
 		}
 
 		/**
