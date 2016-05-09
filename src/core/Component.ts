@@ -2,7 +2,7 @@ namespace Roller {
 
 	export abstract class Component {
 
-		public attach(): Component { return this; }
+		public enabled: boolean;
 
 		public update(): void { }
 		public fixedUpdate(): void { }

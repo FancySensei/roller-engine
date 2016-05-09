@@ -1,13 +1,23 @@
+/// <reference path="../../typings/pixi.js/pixi.js.d.ts" />
 /// <reference path="Component.ts" />
 
 namespace Roller {
 
-	export class GameObject {
+	import Container = PIXI.Container;
+
+	export class GameObject extends Container {
+
+		public enabled: boolean = true;
 
 		protected components: Array<Component> = [];
+		protected gameObjects: Array<GameObject> = [];
+
+		constructor() {
+			super();
+		}
 
 		/**
-		 * Add a component to the update list.
+		 * Add a Component to the update list.
 		 */
 		public addComponent(component: Component): GameObject {
 			let index = this.components.indexOf(component);
@@ -22,7 +32,7 @@ namespace Roller {
 		}
 
 		/**
-		 * Remove a component from the update list.
+		 * Remove a Component from the update list.
 		 */
 		public removeComponent(component: Component): GameObject {
 			let index = this.components.indexOf(component);
@@ -37,12 +47,70 @@ namespace Roller {
 		}
 
 		/**
+		 * Add a GameObject to the list.
+		 */
+		public addGameObject(gameObject: GameObject, at?: number): GameObject {
+			let index = this.gameObjects.indexOf(gameObject);
+			if (index >= 0) {
+				if (at) {
+					this.gameObjects.splice(at, 0, gameObject);
+					this.addChildAt(gameObject, at);
+				}
+				else {
+					this.gameObjects.push(gameObject);
+					this.addChild(gameObject);
+				}
+			}
+			else {
+				console.warn("GameObject cannot be added (already exist): ", gameObject);
+			}
+
+			return this;
+		}
+
+		/**
+		 * Remove a GameObject from the list.
+		 */
+		public removeGameObject(gameObject: GameObject): GameObject {
+			let index = this.gameObjects.indexOf(gameObject);
+			if (index >= 0) {
+				this.gameObjects.splice(index, 1);
+				this.removeChild(gameObject);
+			}
+			else {
+				console.warn("GameObject cannot be removed (does not exist): ", gameObject);
+			}
+
+			return this;
+		}
+
+		/**
+		 * Remove a GameObject from the list.
+		 */
+		public removeGameObjectAt(index: number): GameObject {
+			if (index >= 0 && index < this.gameObjects.length) {
+				this.gameObjects.splice(index, 1);
+				this.removeChildAt(index);
+			}
+			else {
+				console.warn("GameObject cannot be removed (invalid index): ", this);
+			}
+
+			return this;
+		}
+
+		/**
 		 * Regular update -- called once per frame.
 		 * Should only get called from the owner Scene.
 		 */
 		public update(): void {
+			if (!this.enabled) return;
+			
 			this.components.forEach(component => {
 				component.update();
+			});
+			this.gameObjects.forEach(gameObject => {
+				gameObject.update();
 			});
 		}
 
@@ -51,14 +119,28 @@ namespace Roller {
 		 * Should only get called from the owner Scene.
 		 */
 		public fixedUpdate(): void {
+			if (!this.enabled) return;
+			
 			this.components.forEach(component => {
 				component.fixedUpdate();
 			});
+			this.gameObjects.forEach(gameObject => {
+				gameObject.fixedUpdate();
+			});
 		}
 
+		/**
+		 * Late update -- called once per frame.
+		 * Should only get called from the owner Scene.
+		 */
 		public lateUpdate(): void {
+			if (!this.enabled) return;
+			
 			this.components.forEach(component => {
 				component.lateUpdate();
+			});
+			this.gameObjects.forEach(gameObject => {
+				gameObject.lateUpdate();
 			});
 		}
 

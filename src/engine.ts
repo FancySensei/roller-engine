@@ -1,59 +1,89 @@
 /// <reference path="../typings/pixi.js/pixi.js.d.ts" />
+/// <reference path="core/Scene.ts" />
 /// <reference path="system/Time.ts" />
-
-import Container = PIXI.Container;
-import Sprite = PIXI.Sprite;
 
 namespace Roller {
 
+	import Sprite = PIXI.Sprite;
+
 	export class Engine {
+
+		private static _instance: Engine;
+		static get instance(): Engine {
+			return this.instance;
+		}
 
 		private _renderer: PIXI.CanvasRenderer | PIXI.WebGLRenderer;
 		get renderer(): PIXI.CanvasRenderer | PIXI.WebGLRenderer {
 			return this._renderer;
 		}
-		private stage: Container;
-		private candy: Sprite;
+
+		private _currentScene: Scene;
+		get currentScene(): Scene {
+			return this._currentScene;
+		}
+
+		private _isRunning: boolean = false;
+		get isRunning(): boolean {
+			return this._isRunning;
+		}
+
+		private requestedAnimationFrame: number;
 
 		constructor(width: number = 800, height: number = 600) {
+			if (Engine._instance != null) {
+				console.error("You'd better not instantiate more than 1 Roller Engine!")
+			}
+			Engine._instance = this;
+
 			this._renderer = PIXI.autoDetectRenderer(width, height);
 			document.body.appendChild(this.renderer.view);
 			this.renderer.autoResize = true;
 
 			window.addEventListener("resize", this.onResize);
-
-			this.stage = new Container();
-
-			this.candy = Sprite.fromImage("./assets/candy.png", false);
-			this.candy.anchor.set(0.5, 0.5);
-			this.candy.position.set(width / 2.0, height / 2.0);
-
-			this.stage.addChild(this.candy);
-
-			this.onFrameRequestCallback(0);
 		}
 
-		private onResize(event: UIEvent): any {
-			engine.renderer.resize(window.innerWidth, window.innerHeight);
-			engine.candy.position.set(window.innerWidth / 2.0, window.innerHeight / 2.0)
+		/**
+		 * Start the engine. Return false when engine already started.
+		 */
+		public start(scene?: Scene): boolean {
+			if (this._isRunning) return false;
+
+			this._currentScene = scene;
+			this.onFrameRequestCallback(0);
+			this._isRunning = true;
+			return true;
+		}
+
+		/**
+		 * Stop the engine -- will generate a spike on Time.deltaTime.
+		 */
+		public stop(): void {
+			cancelAnimationFrame(this.requestedAnimationFrame);
+			this._isRunning = false;
+		}
+
+		private onResize = (event: UIEvent): any => {
+			this.renderer.resize(window.innerWidth, window.innerHeight);
+			this.currentScene.onResize(this.renderer.width, this.renderer.height);
 		}
 
 		private update(): void {
-			this.candy.rotation += 0.1;
+			this.currentScene.update();
+			this.currentScene.fixedUpdate();
+			this.currentScene.lateUpdate();
 		}
 
 		private render(): void {
-			this.renderer.render(this.stage);
+			this.renderer.render(this._currentScene);
 		}
 
 		private onFrameRequestCallback = (timeStamp: number): void => {
-			requestAnimationFrame(this.onFrameRequestCallback);
+			this.requestedAnimationFrame = requestAnimationFrame(this.onFrameRequestCallback);
 			Time.update(timeStamp);
 			this.update();
 			this.render();
 		}
 
 	}
-
-	export var engine = new Engine(window.innerWidth, window.innerHeight);
 }
